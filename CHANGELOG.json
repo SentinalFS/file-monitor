@@ -1,0 +1,9 @@
+[
+    {
+        "version": "0.1.0",
+        "changes": [
+            "A local file monitoring tool early release",
+            "Can monitor read, write, rename, create"
+        ]
+    }
+]
