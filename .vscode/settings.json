@@ -1,0 +1,14 @@
+{
+	"files.associations": {
+		"fdtable.h": "c",
+		"ptrace.h": "c",
+		"fs.h": "c",
+		"sched.h": "c",
+		"file.h": "c",
+		"types.h": "c",
+		"fscrypt.h": "c",
+		"vmlinux.h": "c",
+		"bpf_endian.h": "c",
+		"bpf_tracing.h": "c"
+	}
+}
