@@ -1,0 +1,52 @@
+name: Build and Release eBPF Monitor
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  build-and-release-file-monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang llvm cmake linux-tools-generic libbpf-dev
+
+      - name: Build eBPF object with CMake
+        run: |
+          cmake -B build
+          cmake --build build --target all_bpf
+
+      - name: Check version
+        run: |
+          VERSION=$(cat VERSION.txt)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "Version: $VERSION"
+
+      - name: Create Tag
+        if: github.event_name == 'push' && github.base_ref == 'refs/heads/main'
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git tag "v${{ env.version }}"
+          git push origin "v${{ env.version }}"
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.base_ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.version }}
+          name: Release local monitor v${{ env.version }}
+          files: local_file_monitor/build/monitor.bpf.o
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

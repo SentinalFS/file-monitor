@@ -50,3 +50,15 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# CMake
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# vmlinux
+vmlinux.h
+
+# local
+local
