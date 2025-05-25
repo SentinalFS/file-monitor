@@ -70,15 +70,6 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     __builtin_memcpy(data->otype, operation, sizeof(data->otype));
     bpf_get_current_comm(&data->comm, sizeof(data->comm));
 
-
-    char *fmt = "LOG: pid, uid, filename, otype, comm";
-    bpf_trace_printk(fmt, sizeof(fmt));
-    bpf_trace_printk(data->pid, sizeof(data->pid));
-    bpf_trace_printk(data->uid, sizeof(data->uid));
-    bpf_trace_printk(data->filename, sizeof(data->filename));
-    bpf_trace_printk(data->otype, sizeof(data->otype));
-    bpf_trace_printk(data->comm, sizeof(data->comm));
-
     struct inode *inode = NULL;
     bpf_core_read(&inode, sizeof(inode), &file->f_inode);
     if (!inode)
@@ -88,6 +79,10 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     bpf_core_read(&inode_num, sizeof(inode_num), &inode->i_ino);
 
     struct inode_key key = {.inode = inode_num};
+
+    bpf_trace_printk("LOG: filename=%s otype=%s comm=%s\n", sizeof("LOG: filename=%s otype=%s comm=%s\n"), data->filename, data->otype, data->comm);
+    bpf_trace_printk("LOG: inode=%u\n", sizeof("LOG: inode=%u\n"), inode_num);
+
     u32 *monitored = bpf_map_lookup_elem(&monitored_inodes, &key);
     if (!monitored)
         return 0;
