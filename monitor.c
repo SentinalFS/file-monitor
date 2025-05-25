@@ -60,7 +60,7 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
         return 0;
 
     char fname[128] = {};
-    bpf_core_read_str(&fname, sizeof(fname), d_name.name);
+    bpf_core_read_str(fname, sizeof(fname), d_name.name);
 
     data->pid = bpf_get_current_pid_tgid() >> 32;
     data->uid = bpf_get_current_uid_gid();
@@ -77,7 +77,12 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
 
     u32 inode_num = 0;
     bpf_core_read(&inode_num, sizeof(inode_num), &inode->i_ino);
+
     struct inode_key key = {.inode = inode_num};
+
+    bpf_trace_printk("LOG: filename=%s otype=%s comm=%s\n", sizeof("LOG: filename=%s otype=%s comm=%s\n"), data->filename, data->otype, data->comm);
+    bpf_trace_printk("LOG: inode=%u\n", sizeof("LOG: inode=%u\n"), inode_num);
+
     u32 *monitored = bpf_map_lookup_elem(&monitored_inodes, &key);
     if (!monitored)
         return 0;
@@ -103,15 +108,24 @@ int trace_write(struct pt_regs *ctx)
 }
 
 SEC("kprobe/vfs_rename")
-int BPF_KPROBE(trace_rename, struct file *oldfile, struct file *newfile)
+int trace_rename(struct pt_regs *ctx)
 {
+    struct file *file = (struct file *)PT_REGS_PARM1(ctx);
     char OPRN[] = "RENAME";
-    return trace_file_operation(ctx, oldfile, OPRN);
+    return trace_file_operation(ctx, file, OPRN);
 }
 
 SEC("kprobe/vfs_create")
 int BPF_KPROBE(trace_create, struct file *file, umode_t mode, bool excl)
 {
     char OPRN[] = "CREATE";
+    return trace_file_operation(ctx, file, OPRN);
+}
+
+SEC("kprobe/vfs_unlink")
+int trace_delete(struct pt_regs *ctx)
+{
+    struct file *file = (struct file *)PT_REGS_PARM2(ctx); // file being deleted
+    char OPRN[] = "DELETE";
     return trace_file_operation(ctx, file, OPRN);
 }
