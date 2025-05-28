@@ -1,5 +1,13 @@
 [
     {
+        "version": "0.1.1",
+        "changes": [
+            "Added support for monitoring file deletions",
+            "Improved performance for large directories",
+            "Fixed a bug where some file events were not captured"
+        ]
+    },
+    {
         "version": "0.1.0",
         "changes": [
             "A local file monitoring tool early release",

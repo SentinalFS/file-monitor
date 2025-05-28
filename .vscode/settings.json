@@ -16,6 +16,8 @@
 		"ranges": "c",
 		"span": "c",
 		"cstdio": "c",
-		"*.inc": "c"
+		"*.inc": "c",
+		"bpf_core_read.h": "c",
+		"data_types.h": "c"
 	}
 }

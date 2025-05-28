@@ -59,8 +59,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
-          name: Release local monitor v${{ env.version }}
-          files: local_file_monitor/build/monitor.bpf.o
+          name: Release v${{ env.version }}
+          files: build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
