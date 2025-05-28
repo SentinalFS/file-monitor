@@ -1,5 +1,11 @@
 [
     {
+        "version": "0.1.2",
+        "changes": [
+            "Fix release extras"
+        ]
+    },
+    {
         "version": "0.1.1",
         "changes": [
             "Added support for monitoring file deletions",
