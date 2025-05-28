@@ -60,7 +60,7 @@ jobs:
         with:
           tag_name: v${{ env.version }}
           name: Release v${{ env.version }}
-          files: build/*
+          files: build/monitor.bpf.o
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
