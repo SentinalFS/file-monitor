@@ -1,8 +1,8 @@
 #include "headers.h"
 
-struct
-{
-    __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
+struct {
+    __uint(type, BPF_MAP_TYPE_RINGBUF);
+    __uint(max_entries, 256 * 1024);
 } events SEC(".maps");
 
 struct
@@ -13,13 +13,6 @@ struct
     __uint(max_entries, 256);
 } monitored_inodes SEC(".maps");
 
-struct
-{
-    __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-    __type(key, u32);
-    __type(value, struct data_t);
-    __uint(max_entries, 1);
-} logs_data SEC(".maps");
 
 struct inode_key
 {
