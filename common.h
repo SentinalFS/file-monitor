@@ -6,21 +6,26 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     if (!file)
         return 0;
 
-    u32 zero = 0;
-    struct data_t *data = bpf_map_lookup_elem(&logs_data, &zero);
-    if (!data)
+    struct data_t *data = bpf_ringbuf_reserve(&events, sizeof(struct data_t), 0);
+    if (!data) {
         return 0;
+    }
     __builtin_memset(data, 0, sizeof(*data));
+
 
     struct dentry *de = NULL;
     bpf_core_read(&de, sizeof(de), &file->f_path.dentry);
-    if (!de)
+    if (!de) {
+        bpf_ringbuf_discard(data, 0);
         return 0;
+    }
 
     struct qstr d_name = {};
     bpf_core_read(&d_name, sizeof(d_name), &de->d_name);
-    if (d_name.len == 0)
+    if (d_name.len == 0) {
+        bpf_ringbuf_discard(data, 0);
         return 0;
+    }
 
     char fname[128] = {};
     bpf_core_read_str(fname, sizeof(fname), d_name.name);
@@ -35,8 +40,10 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
 
     struct inode *inode = NULL;
     bpf_core_read(&inode, sizeof(inode), &file->f_inode);
-    if (!inode)
+    if (!inode) {
+        bpf_ringbuf_discard(data, 0);
         return 0;
+    }
 
     u32 inode_num = 0;
     bpf_core_read(&inode_num, sizeof(inode_num), &inode->i_ino);
@@ -47,9 +54,12 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     bpf_trace_printk("LOG: inode=%u\n", sizeof("LOG: inode=%u\n"), inode_num);
 
     u32 *monitored = bpf_map_lookup_elem(&monitored_inodes, &key);
-    if (!monitored)
+    if (!monitored) {
+        bpf_ringbuf_discard(data, 0);
         return 0;
+    }
 
-    bpf_perf_event_output(ctx, &events, BPF_F_CURRENT_CPU, data, sizeof(*data));
+    bpf_ringbuf_submit(data, 0);
+
     return 0;
 }
