@@ -20,12 +20,14 @@ int trace_write(struct pt_regs *ctx)
     return trace_file_operation(ctx, file, OPRN);
 }
 
+// TODO: Impliment in a different way
 SEC("kprobe/vfs_rename")
 int trace_rename(struct pt_regs *ctx)
 {
-    struct file *file = (struct file *)PT_REGS_PARM1(ctx);
-    char OPRN[] = "RENAME";
-    return trace_file_operation(ctx, file, OPRN);
+    struct dentry *old_dentry = (struct dentry *)PT_REGS_PARM2(ctx);
+    struct dentry *new_dentry = (struct dentry *)PT_REGS_PARM4(ctx);
+
+    return trace_file_rename(ctx, old_dentry, new_dentry);
 }
 
 SEC("kprobe/vfs_unlink")
