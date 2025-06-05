@@ -1,3 +1,6 @@
+#ifndef DATA_TYPES_H
+#define DATA_TYPES_H
+
 #include "headers.h"
 
 struct {
@@ -39,3 +42,5 @@ struct rename_data_t
     u64 timestamp;
     char otype[OTYPE_SIZE];
 };
+
+#endif
