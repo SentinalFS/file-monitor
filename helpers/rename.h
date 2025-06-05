@@ -10,7 +10,7 @@ static __always_inline int trace_file_rename(
     if (!old_dentry || !new_dentry)
         return 0;
 
-    struct rename_data_t *data = bpf_ringbuf_reserve(&events, sizeof(struct rename_data_t), 0);
+    struct rename_data_t *data = bpf_ringbuf_reserve(&rename_events, sizeof(struct rename_data_t), 0);
     if (!data)
     {
         return 0;
@@ -61,4 +61,4 @@ static __always_inline int trace_file_rename(
     return 0;
 }
 
-#endif /* RENAME_H */
+#endif
