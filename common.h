@@ -5,7 +5,7 @@
 #include "data_types.h"
 #include "helpers/read_write.h"
 #include "helpers/rename.h"
-
+#include "helpers/delete.h"
 // Common includes and definitions can stay here
 
 #endif /* COMMON_H */

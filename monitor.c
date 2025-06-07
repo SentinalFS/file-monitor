@@ -32,18 +32,8 @@ int trace_rename(struct pt_regs *ctx)
 SEC("kprobe/vfs_unlink")
 int trace_delete(struct pt_regs *ctx)
 {
-    struct mnt_idmap *idmap = (struct mnt_idmap *)PT_REGS_PARM1(ctx);
-    struct inode *dir = (struct inode *)PT_REGS_PARM2(ctx);
-    struct dentry *dentry = (struct dentry *)PT_REGS_PARM3(ctx);
-    
-    if (!dentry)
-        return 0;
-    
-    // Create a fake file structure to reuse trace_file_operation
-    struct file fake_file = {};
-    // We only need the dentry for path resolution
-    fake_file.f_path.dentry = dentry;
+    struct dentry *dentry = (struct dentry *)PT_REGS_PARM2(ctx);
 
     char OPRN[] = "DELETE";
-    return trace_file_operation(ctx, &fake_file, OPRN);
+    return trace_file_delete(ctx, dentry, OPRN);
 }
