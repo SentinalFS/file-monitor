@@ -48,13 +48,9 @@ static __always_inline int trace_file_rename(
     __builtin_memcpy(data->otype, OPRN, sizeof(data->otype));
     bpf_get_current_comm(&data->comm, sizeof(data->comm));
 
-    bpf_trace_printk("LOG: old_filename=%s new_filename=%s otype=%s comm=%s\n",
-                     sizeof("LOG: old_filename=%s new_filename=%s otype=%s comm=%s\n"),
-                     data->old_filename, data->new_filename, data->otype);
+    bpf_trace_printk("LOG: old_filename=%s new_filename=%s otype=%s comm=%s\n", sizeof("LOG: old_filename=%s new_filename=%s otype=%s comm=%s\n"), data->old_filename, data->new_filename, data->otype);
     bpf_trace_printk("LOG: comm=%s\n", sizeof("LOG: comm=%s\n"), data->comm);
-    bpf_trace_printk("LOG: old_name=%s new_name=%s\n",
-                     sizeof("LOG: old_name=%s new_name=%s\n"),
-                     old_fname, new_fname);
+    bpf_trace_printk("LOG: old_name=%s new_name=%s\n", sizeof("LOG: old_name=%s new_name=%s\n"), old_fname, new_fname);
 
     bpf_ringbuf_submit(data, 0);
 

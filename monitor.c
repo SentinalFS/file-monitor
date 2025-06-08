@@ -32,8 +32,6 @@ int trace_rename(struct pt_regs *ctx)
 SEC("kprobe/vfs_unlink")
 int trace_delete(struct pt_regs *ctx)
 {
-    struct dentry *dentry = (struct dentry *)PT_REGS_PARM2(ctx);
-
-    char OPRN[] = "DELETE";
-    return trace_file_delete(ctx, dentry, OPRN);
+    struct dentry *dentry = (struct dentry *)PT_REGS_PARM3(ctx);
+    return trace_file_delete(ctx, dentry);
 }

@@ -3,6 +3,8 @@
 
 #include "headers.h"
 
+#define DCACHE_NEGATIVE_DENTRY 0x0020
+
 struct {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
     __uint(max_entries, 512 * 1024);
@@ -12,6 +14,8 @@ struct {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
     __uint(max_entries, 256 * 1024);
 } rename_events SEC(".maps");
+
+// TODO: Create delete events map
 
 struct
 {
@@ -47,5 +51,7 @@ struct rename_data_t
     u64 timestamp;
     char otype[OTYPE_SIZE];
 };
+
+// TODO: Create a delete struct also add inode to it
 
 #endif
