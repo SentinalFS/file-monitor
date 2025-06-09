@@ -4,21 +4,6 @@
 #include "../headers.h"
 #include "../data_types.h"
 
-
-/*
-sudo bpftrace -e 'kprobe:vfs_unlink { 
-    $dentry = (struct dentry *)arg2;
-    printf("dentry ptr: %p, d_name.len: %d, d_name.name_ptr: %s\n", 
-    $dentry, $dentry->d_name.len, str($dentry->d_name.name));
-    
-    $parent = $dentry->d_parent;
-    if ($parent != 0) {
-        printf("Parent name: %s\n", str($parent->d_name.name));
-    } else {
-        printf("Parent: NULL\n");
-    }
-}'
-*/
 static __always_inline int trace_file_delete(struct pt_regs *ctx, struct dentry *de)
 {
     if (!de)
@@ -63,6 +48,9 @@ static __always_inline int trace_file_delete(struct pt_regs *ctx, struct dentry 
     data->timestamp = bpf_ktime_get_ns();
     
     bpf_get_current_comm(&data->comm, sizeof(data->comm));
+
+    int cgroup_id = bpf_get_current_cgroup_id();
+    data->cgroup_id = cgroup_id;
 
     bpf_ringbuf_submit(data, 0);
     return 0;

@@ -39,9 +39,12 @@ static __always_inline int trace_file_rename(
     bpf_core_read_str(old_fname, sizeof(old_fname), old_name.name);
     bpf_core_read_str(new_fname, sizeof(new_fname), new_name.name);
 
+    int cgroup_id = bpf_get_current_cgroup_id();
+
     data->pid = bpf_get_current_pid_tgid() >> 32;
     data->uid = bpf_get_current_uid_gid();
     data->timestamp = bpf_ktime_get_ns();
+    data->cgroup_id = cgroup_id;
 
     __builtin_memcpy(data->old_filename, old_fname, sizeof(data->old_filename));
     __builtin_memcpy(data->new_filename, new_fname, sizeof(data->new_filename));

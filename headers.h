@@ -10,5 +10,6 @@
 #define FILE_NAME_SIZE 144
 #define OTYPE_SIZE 16
 #define COMM_SIZE 32
+#define DCACHE_NEGATIVE_DENTRY 0x0020
 
 #endif

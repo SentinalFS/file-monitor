@@ -66,6 +66,9 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
         return 0;
     }
 
+    int cgroup_id = bpf_get_current_cgroup_id();
+    data->cgroup_id = cgroup_id;
+
     bpf_ringbuf_submit(data, 0);
 
     return 0;
