@@ -1,28 +1,32 @@
-[   {
-        "version": "0.2.0",
+[   
+    {
+        "version": "0.3.0",
         "changes": [
-            "Implimented ring buffer for file events"
+            "Fix rename and delete events",
+            "Added cgroup support for file events"
         ]
     },
-    {
-        "version": "0.1.2",
-        "changes": [
-            "Fix release extras"
-        ]
-    },
-    {
-        "version": "0.1.1",
-        "changes": [
-            "Added support for monitoring file deletions",
-            "Improved performance for large directories",
-            "Fixed a bug where some file events were not captured"
-        ]
-    },
-    {
-        "version": "0.1.0",
-        "changes": [
-            "A local file monitoring tool early release",
-            "Can monitor read, write, rename, create"
-        ]
-    }
+	{
+		"version": "0.2.0",
+		"changes": ["Implimented ring buffer for file events"]
+	},
+	{
+		"version": "0.1.2",
+		"changes": ["Fix release extras"]
+	},
+	{
+		"version": "0.1.1",
+		"changes": [
+			"Added support for monitoring file deletions",
+			"Improved performance for large directories",
+			"Fixed a bug where some file events were not captured"
+		]
+	},
+	{
+		"version": "0.1.0",
+		"changes": [
+			"A local file monitoring tool early release",
+			"Can monitor read, write, rename, create"
+		]
+	}
 ]
