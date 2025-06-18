@@ -32,13 +32,32 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
         return 0;
     }
 
+    struct qstr parent_d_name = {};
+    struct dentry *parent_de = NULL;
+    bpf_core_read(&parent_de, sizeof(parent_de), &de->d_parent);
+    if (parent_de)
+    {
+        bpf_core_read(&parent_d_name, sizeof(parent_d_name), &parent_de->d_name);
+    }
+
+    bpf_core_read(&parent_d_name, sizeof(parent_d_name), &parent_de->d_name);
+    if (parent_d_name.len == 0)
+    {
+        bpf_ringbuf_discard(data, 0);
+        return 0;
+    }
+
     char fname[FILE_NAME_SIZE] = {};
     bpf_core_read_str(fname, sizeof(fname), d_name.name);
+
+    char parent_fname[FILE_NAME_SIZE] = {};
+    bpf_core_read_str(parent_fname, sizeof(parent_fname), parent_d_name.name);
 
     data->pid = bpf_get_current_pid_tgid() >> 32;
     data->uid = bpf_get_current_uid_gid();
     data->timestamp = bpf_ktime_get_ns();
 
+    __builtin_memcpy(data->parent_filename, parent_fname, sizeof(data->parent_filename));
     __builtin_memcpy(data->filename, fname, sizeof(data->filename));
     __builtin_memcpy(data->otype, operation, sizeof(data->otype));
     bpf_get_current_comm(&data->comm, sizeof(data->comm));
@@ -53,18 +72,10 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
 
     u32 inode_num = 0;
     bpf_core_read(&inode_num, sizeof(inode_num), &inode_ptr->i_ino);
-
-    struct inode_key key = {.inode = inode_num};
+    data->inode = inode_num;
 
     bpf_trace_printk("LOG: filename=%s otype=%s comm=%s\n", sizeof("LOG: filename=%s otype=%s comm=%s\n"), data->filename, data->otype, data->comm);
     bpf_trace_printk("LOG: inode=%u\n", sizeof("LOG: inode=%u\n"), inode_num);
-
-    u32 *monitored = bpf_map_lookup_elem(&monitored_inodes, &key);
-    if (!monitored)
-    {
-        bpf_ringbuf_discard(data, 0);
-        return 0;
-    }
 
     int cgroup_id = bpf_get_current_cgroup_id();
     data->cgroup_id = cgroup_id;

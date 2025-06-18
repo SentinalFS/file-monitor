@@ -15,20 +15,6 @@ struct {
     __uint(max_entries, 256 * 1024);
 } rename_events SEC(".maps");
 
-struct
-{
-    __uint(type, BPF_MAP_TYPE_HASH);
-    __type(key, struct inode_key);
-    __type(value, u32);
-    __uint(max_entries, 256);
-} monitored_inodes SEC(".maps");
-
-
-struct inode_key
-{
-    u32 inode;
-};
-
 struct data_t
 {
     u32 pid;
