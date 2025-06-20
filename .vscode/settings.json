@@ -21,6 +21,7 @@
 		"data_types.h": "c",
 		"chrono": "c",
 		"text_encoding": "c",
-		"typeinfo": "c"
+		"typeinfo": "c",
+		"utils.h": "c"
 	}
 }
