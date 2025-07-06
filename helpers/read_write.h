@@ -23,8 +23,7 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     bpf_core_read(&de, sizeof(de), &file->f_path.dentry);
     if (!de)
     {
-        bpf_ringbuf_discard(data, 0);
-        return 0;
+        DISCARD_AND_RETURN(data);
     }
 
     // Get filename
@@ -32,8 +31,7 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     bpf_core_read(&d_name, sizeof(d_name), &de->d_name);
     if (d_name.len == 0)
     {
-        bpf_ringbuf_discard(data, 0);
-        return 0;
+        DISCARD_AND_RETURN(data);
     }
 
     // Get parent dentry
@@ -41,8 +39,7 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     bpf_core_read(&parent_de, sizeof(parent_de), &de->d_parent);
     if (!parent_de)
     {
-        bpf_ringbuf_discard(data, 0);
-        return 0;
+        DISCARD_AND_RETURN(data);
     }
 
     // Get parent filename
@@ -50,8 +47,7 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     bpf_core_read(&parent_d_name, sizeof(parent_d_name), &parent_de->d_name);
     if (parent_d_name.len == 0)
     {
-        bpf_ringbuf_discard(data, 0);
-        return 0;
+        DISCARD_AND_RETURN(data);
     }
 
     // Get Inode from file structure
@@ -59,8 +55,7 @@ static __always_inline int trace_file_operation(struct pt_regs *ctx, struct file
     bpf_core_read(&inode_ptr, sizeof(inode_ptr), &file->f_inode);
     if (!inode_ptr)
     {
-        bpf_ringbuf_discard(data, 0);
-        return 0;
+        DISCARD_AND_RETURN(data);
     }
 
     // Get the current cgroup ID
