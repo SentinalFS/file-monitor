@@ -52,7 +52,6 @@ static __always_inline int trace_file_delete(struct pt_regs *ctx, struct dentry 
     bpf_core_read(&d_parent_flags, sizeof(d_parent_flags), &parent_de->d_flags);
     bpf_core_read(&d_flags, sizeof(d_flags), &de->d_flags);
     if ((d_parent_flags & DCACHE_NEGATIVE_DENTRY) || (d_flags & DCACHE_NEGATIVE_DENTRY)) {
-        bpf_trace_printk("Negative dentry detected: parent flags: %u, dentry flags: %u\n", d_parent_flags, d_flags);
         DISCARD_AND_RETURN(data);
     }
 

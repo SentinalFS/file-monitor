@@ -58,7 +58,6 @@ static __always_inline int trace_file_rename(
     bpf_core_read(&new_parent_flags, sizeof(new_parent_flags), &new_parent_de->d_flags);
     bpf_core_read(&old_parent_flags, sizeof(old_parent_flags), &old_parent_de->d_flags);
     if ((old_parent_flags & DCACHE_NEGATIVE_DENTRY) || (new_parent_flags & DCACHE_NEGATIVE_DENTRY)) {
-        bpf_trace_printk("Negative dentry detected: old parent flags: %u, new parent flags: %u\n", old_parent_flags, new_parent_flags);
         DISCARD_AND_RETURN(data);
     }
 

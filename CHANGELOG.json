@@ -1,4 +1,7 @@
-[   
+[   {
+		"version": "0.3.1",
+		"changes": ["Fix memory leak in file event handling"]
+	},
     {
         "version": "0.3.0",
         "changes": [
